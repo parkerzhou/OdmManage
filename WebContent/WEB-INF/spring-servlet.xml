@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	<!-- 完成于<context:annotation-config>一样的工作，还可以扫描指定的包，查找出能够自动注册为SpringBean的类 -->
+	<context:component-scan base-package="com.tcl.controller" />
+	
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/pages/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+	<mvc:annotation-driven /> 
+	<!-- <mvc:resources/>需要<mvc:annotation-driven/>（或者明确地声明handler mapping，等等）。 
+		需要这么做是因为只有当上下文（context）没有定制的handler mapping时， DispatcherServlet才会应用默认的handler 
+		mappings配置。 由于<mvc:resources/>添加了它自己的handler mapping，默认的就失效了， 因此其他handler 
+		mapping应该被明确的声明出来，要么通过<mvc:annotation-driven/>，要么通过手工写Bean。 -->
+    <!-- <mvc:default-servlet-handler />  -->
+</beans>
+
+
+

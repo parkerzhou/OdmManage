@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcl.inter.Login">
+	<select id="findUserByUserName" parameterType="string"
+		resultType="User">
+		select tu_id,tu_login_name,tu_login_pwd,tu_user_name from t_user where
+		tu_login_name like #{username}
+	</select>
+	<select id="selectTodayNewNum" resultType="int">
+		select count(tq_id) from t_question,t_workshop where
+		t_question.tq_add_tim=#{today} and
+		t_question.t_ws_id=t_workshop.tw_id and t_workshop.tw_name=#{workshop}
+	</select>
+	<select id="selectNnCloseQuesNum" resultType="int">
+		select count(tq_id) from t_question,t_workshop where t_question.tq_state=1
+		and
+		t_question.t_ws_id=t_workshop.tw_id and t_workshop.tw_name=#{workshop}
+	</select>
+	<select id="selectClosedQuesNum" resultType="int">
+		select count(tq_id) from t_question,t_workshop where t_question.tq_state=0
+		and
+		t_question.t_ws_id=t_workshop.tw_id and t_workshop.tw_name=#{workshop}
+	</select>
+	<update id="changepw">
+	    UPDATE t_user SET
+		tu_login_pwd=#{password} where tu_id=#{userid}
+	</update>
+</mapper>	

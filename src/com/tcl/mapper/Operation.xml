@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcl.inter.Operation">
+	<resultMap id="QuesInfoList" type="Question">
+		<id property="id" column="tq_id" />
+		<result property="user_id" column="t_user_id" />
+		<result property="first_id" column="t_first_id" />
+		<result property="scond_id" column="t_second_id" />
+		<result property="no" column="tq_no" />
+		<result property="pro_name" column="tq_pro_name" />
+		<result property="pro_plan_num" column="tq_pro_plan_num" />
+		<result property="pro_num" column="tq_pro_num" />
+		<result property="bad_ratio" column="tq_bad_ratio" />
+		<result property="occur_tim" column="tq_occur_tim" />
+		<result property="close_tim" column="tq_close_tim" />
+		<result property="body" column="tq_body" />
+		<result property="state" column="tq_state" />
+
+		<association property="solve" javaType="Solve">
+			<id property="id" column="ts_id" />
+			<result property="tem_metnod" column="ts_tem_metnod" />
+			<result property="basic_method" column="ts_basic_method" />
+			<result property="plan_tim" column="ts_plan_tim" />
+			<result property="head" column="ts_head" />
+			<result property="comfirm" column="ts_comfirm" />
+			<result property="iscomfirm" column="ts_iscomfirm" />
+			<result property="QA_comf" column="ts_QA_comf" />
+		</association>
+		<association property="client" javaType="Client">
+			<id property="id" column="tc_id" />
+			<result property="name" column="tc_name" />
+		</association>
+		<association property="dept" javaType="Dept">
+			<id property="id" column="td_id" />
+			<result property="name" column="td_name" />
+		</association>
+		<association property="line" javaType="Line">
+			<id property="id" column="tl_id" />
+			<result property="name" column="tl_name" />
+		</association>
+		<association property="reason" javaType="Reason">
+			<id property="id" column="tr_id" />
+			<result property="body" column="tr_body" />
+		</association>
+		<association property="sort" javaType="Sort">
+			<id property="id" column="tsort_id" />
+			<result property="name" column="tsort_name" />
+		</association>
+		<association property="workshop" javaType="WorkShop">
+			<id property="id" column="tw_id" />
+			<result property="name" column="tw_name" />
+		</association>
+	</resultMap>
+	<select id="selectQuesById" parameterType="int" resultMap="QuesInfoList">
+		select
+		tq_id,t_user_id,t_first_id,t_second_id,tq_no,tq_pro_name,tq_pro_plan_num,tq_pro_num,tq_bad_ratio,tq_occur_tim,tq_body,
+		tq_state,ts_id,ts_tem_metnod,ts_basic_method,ts_plan_tim,ts_head,ts_comfirm,ts_iscomfirm,ts_QA_comf,tr_id,tr_body,tc_id,tc_name,
+		td_id,td_name,tl_id,tl_name,tsort_id,tsort_name from
+		t_question,t_client,t_dept,t_line,t_sort,t_reason,t_solve where
+		t_question.tq_id=#{ques_id} and t_question.t_dept_id=t_dept.td_id and
+		t_question.t_line_id=t_line.tl_id
+		and t_question.t_client_id=t_client.tc_id and
+		t_question.t_sort_id=t_sort.tsort_id and
+		t_question.t_reason_id=t_reason.tr_id
+		and t_question.t_solve_id=t_solve.ts_id
+	</select>
+	<update id="updateQues">
+		UPDATE t_question SET
+		tq_no=#{no},tq_pro_name=#{pro_name},tq_pro_plan_num=#{pro_plan_num},tq_pro_num=#{pro_num},
+		tq_bad_ratio=#{bad_ratio},tq_body=#{body}
+		,t_client_id=#{client_id},t_line_id=#{line_id} where tq_id=#{id}
+	</update>
+	<select id="selectReasonById" parameterType="int" resultType="String">
+		select tr_body from t_reason where tr_id=#{tr_id}
+	</select>
+	<insert id="insertReason" parameterType="String">
+		INSERT INTO t_reason(tr_body)VALUES(#{reason})
+	</insert>
+	<select id="getReasonId" resultType="int">
+		select max(tr_id) from t_reason
+	</select>
+	<update id="updateReasonId">
+		UPDATE t_question SET t_reason_id=#{tr_id} where tq_id=#{quesid}
+	</update>
+	<update id="updateReason" parameterType="String">
+		UPDATE t_reason SET tr_body=#{reason} where tr_id=#{tr_id}
+	</update>
+	<update id="updateSolve0" parameterType="String">
+		UPDATE t_solve SET
+		ts_tem_metnod=#{tem_metnod},ts_basic_method=#{basic_method},ts_plan_tim=#{plan_tim},
+		ts_head=#{head},ts_iscomfirm=#{comfirm} where ts_id=#{ts_id}
+	</update>
+	<update id="updateSolve" parameterType="String">
+		UPDATE t_solve SET
+		ts_tem_metnod=#{tem_metnod},
+		ts_head=#{head},ts_iscomfirm=#{comfirm} where ts_id=#{ts_id}
+	</update>
+	<update id="updateSolve2" parameterType="String">
+		UPDATE t_solve SET
+		ts_basic_method=#{basic_method},ts_plan_tim=#{plan_tim}
+		where ts_id=#{ts_id}
+	</update>
+	<insert id="insertSolve0" parameterType="String">
+		INSERT INTO
+		t_solve(ts_tem_metnod,ts_head,ts_iscomfirm,ts_basic_method,ts_plan_tim)VALUES
+		(#{tem_metnod},#{head},#{comfirm},#{basic_method},#{plan_tim})
+	</insert>
+	<insert id="insertSolve" parameterType="String">
+		INSERT INTO
+		t_solve(ts_tem_metnod,ts_head,ts_iscomfirm)VALUES
+		(#{tem_metnod},#{head},#{comfirm})
+	</insert>
+	<insert id="insertSolve2" parameterType="String">
+		INSERT INTO
+		t_solve(ts_basic_method,ts_plan_tim)VALUES
+		(#{basic_method},#{plan_tim})
+	</insert>
+	<update id="saveComfirmName">
+	    update t_solve SET ts_comfirm=#{comfirmname} where ts_id=#{solveid}
+	</update>
+	<select id="getSolveId" resultType="int">
+		select max(ts_id) from t_solve
+	</select>
+	<update id="updateSolveId">
+		UPDATE t_question SET t_solve_id=#{ts_id} where tq_id=#{quesid}
+	</update>
+
+	<update id="updateDeptSort">
+		UPDATE t_question SET t_dept_id=#{dept},t_sort_id=#{sort} where
+		tq_id=#{quesid}
+	</update>
+	<update id="updateClosetime">
+		UPDATE t_question SET tq_close_tim=#{closetime} where tq_id=#{quesid}
+	</update>
+	<update id="updateState">
+		UPDATE t_question SET tq_state=#{state} where tq_id=#{quesid}
+	</update>
+	<update id="saveQA" parameterType="String">
+		UPDATE t_solve SET ts_QA_comf=#{QA} where ts_id=#{solveid}
+	</update>
+	<select id="selectRoleByUserId" parameterType="int" resultType="String">
+		select t_role_id from t_user_role where t_user_id=#{userid}
+	</select>
+	<update id="saveFirstId" parameterType="int">
+		update t_question SET t_first_id=#{firstid} where tq_id=#{quesid}
+	</update>
+	<update id="saveSecondId" parameterType="int">
+		update t_question SET t_second_id=#{secondid} where tq_id=#{quesid}
+	</update>
+	<select id="selectIsComfirm" parameterType="int" resultType="object">
+		select ts_iscomfirm from t_solve where ts_id=#{solveid}
+	</select>
+	<delete id="deleteFirstId"  parameterType="int">
+	    delete t_first_id from t_question where tq_id=#{quesid}
+	</delete>
+	<delete id="deleteSecondId"  parameterType="int">
+	    delete t_second_id from t_question where tq_id=#{quesid}
+	</delete>
+</mapper>	

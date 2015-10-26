@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcl.inter.Ques">
+	<resultMap id="QuesInfoList" type="Question">
+		<id property="id" column="tq_id" />
+		<result property="user_id" column="t_user_id" />
+		<result property="first_id" column="t_first_id" />
+		<result property="scond_id" column="t_second_id" />
+		<result property="no" column="tq_no" />
+		<result property="pro_name" column="tq_pro_name" />
+		<result property="pro_plan_num" column="tq_pro_plan_num" />
+		<result property="pro_num" column="tq_pro_num" />
+		<result property="bad_ratio" column="tq_bad_ratio" />
+		<result property="occur_tim" column="tq_occur_tim" />
+		<result property="close_tim" column="tq_close_tim" />
+		<result property="body" column="tq_body" />
+		<result property="state" column="tq_state" />
+
+		<association property="solve" javaType="Solve">
+			<id property="id" column="ts_id" />
+			<result property="tem_metnod" column="ts_tem_metnod" />
+			<result property="basic_method" column="ts_basic_method" />
+			<result property="plan_tim" column="ts_plan_tim" />
+			<result property="head" column="ts_head" />
+			<result property="comfirm" column="ts_comfirm" />
+			<result property="QA_comf" column="ts_QA_comf" />
+		</association>
+		<association property="client" javaType="Client">
+			<id property="id" column="tc_id" />
+			<result property="name" column="tc_name" />
+		</association>
+		<association property="dept" javaType="Dept">
+			<id property="id" column="td_id" />
+			<result property="name" column="td_name" />
+		</association>
+		<association property="line" javaType="Line">
+			<id property="id" column="tl_id" />
+			<result property="name" column="tl_name" />
+		</association>
+		<association property="reason" javaType="Reason">
+			<id property="id" column="tr_id" />
+			<result property="body" column="tr_body" />
+		</association>
+		<association property="sort" javaType="Sort">
+			<id property="id" column="tsort_id" />
+			<result property="name" column="tsort_name" />
+		</association>
+		<association property="workshop" javaType="WorkShop">
+			<id property="id" column="tw_id" />
+			<result property="name" column="tw_name" />
+		</association>
+	</resultMap>
+	<select id="selectTodayNew" resultMap="QuesInfoList">
+		select
+		tq_id,t_user_id,t_first_id,t_second_id,tq_no,tq_pro_name,tq_pro_plan_num,tq_pro_num,tq_bad_ratio,tq_occur_tim,tq_close_tim,tq_body,
+		tq_state,ts_id,ts_tem_metnod,ts_basic_method,ts_plan_tim,ts_head,ts_comfirm,ts_QA_comf,tc_id,tc_name,td_id,
+		td_name,tl_id,tl_name,tr_id,tr_body,tsort_id,tsort_name,tw_id,tw_name
+		from t_question,t_workshop,t_client,
+		t_dept,t_line,t_reason,t_solve,t_sort where
+		t_question.tq_add_tim=#{today} and t_question.t_ws_id=t_workshop.tw_id
+		and t_workshop.tw_name=#{workshop} and
+		t_question.t_dept_id=t_dept.td_id and
+		t_question.t_line_id=t_line.tl_id
+		and t_question.t_client_id=t_client.tc_id and
+		t_question.t_sort_id=t_sort.tsort_id and
+		t_question.t_reason_id=t_reason.tr_id
+		and t_question.t_solve_id=t_solve.ts_id
+	</select>
+	<select id="selectUnClose" resultMap="QuesInfoList">
+		select
+		tq_id,t_user_id,t_first_id,t_second_id,tq_no,tq_pro_name,tq_pro_plan_num,tq_pro_num,tq_bad_ratio,tq_occur_tim,tq_close_tim,tq_body,
+		tq_state,ts_id,ts_tem_metnod,ts_basic_method,ts_plan_tim,ts_head,ts_comfirm,ts_QA_comf,tc_id,tc_name,td_id,
+		td_name,tl_id,tl_name,tr_id,tr_body,tsort_id,tsort_name,tw_id,tw_name
+		from t_question,t_workshop,t_client,
+		t_dept,t_line,t_reason,t_solve,t_sort where t_question.tq_state=1 and
+		t_question.t_ws_id=t_workshop.tw_id
+		and t_workshop.tw_name=#{workshop} and t_question.t_dept_id=t_dept.td_id
+		and t_question.t_line_id=t_line.tl_id
+		and t_question.t_client_id=t_client.tc_id and
+		t_question.t_sort_id=t_sort.tsort_id and
+		t_question.t_reason_id=t_reason.tr_id
+		and t_question.t_solve_id=t_solve.ts_id
+	</select>
+	<select id="selectCloseQuestion" resultMap="QuesInfoList">
+		select
+		tq_id,t_user_id,t_first_id,t_second_id,tq_no,tq_pro_name,tq_pro_plan_num,tq_pro_num,tq_bad_ratio,tq_occur_tim,tq_close_tim,tq_body,
+		tq_state,ts_id,ts_tem_metnod,ts_basic_method,ts_plan_tim,ts_head,ts_comfirm,ts_QA_comf,tc_id,tc_name,td_id,
+		td_name,tl_id,tl_name,tr_id,tr_body,tsort_id,tsort_name,tw_id,tw_name
+		from t_question,t_workshop,t_client,
+		t_dept,t_line,t_reason,t_solve,t_sort where t_question.tq_state=0 and
+		t_question.t_ws_id=t_workshop.tw_id
+		and t_workshop.tw_name=#{workshop} and t_question.t_dept_id=t_dept.td_id
+		and t_question.t_line_id=t_line.tl_id
+		and t_question.t_client_id=t_client.tc_id and
+		t_question.t_sort_id=t_sort.tsort_id and
+		t_question.t_reason_id=t_reason.tr_id
+		and t_question.t_solve_id=t_solve.ts_id
+	</select>
+	<select id="selectAllQuestion" resultMap="QuesInfoList">
+		select
+		tq_id,t_user_id,t_first_id,t_second_id,tq_no,tq_pro_name,tq_pro_plan_num,tq_pro_num,tq_bad_ratio,tq_occur_tim,tq_close_tim,tq_body,
+		tq_state,ts_id,ts_tem_metnod,ts_basic_method,ts_plan_tim,ts_head,ts_comfirm,ts_QA_comf,tc_id,tc_name,td_id,
+		td_name,tl_id,tl_name,tr_id,tr_body,tsort_id,tsort_name,tw_id,tw_name
+		from t_question,t_workshop,t_client,
+		t_dept,t_line,t_reason,t_solve,t_sort where
+		t_question.t_ws_id=t_workshop.tw_id
+		and t_workshop.tw_name=#{workshop} and t_question.t_dept_id=t_dept.td_id
+		and t_question.t_line_id=t_line.tl_id
+		and t_question.t_client_id=t_client.tc_id and
+		t_question.t_sort_id=t_sort.tsort_id and
+		t_question.t_reason_id=t_reason.tr_id
+		and t_question.t_solve_id=t_solve.ts_id
+	</select>
+	<select id="selectLine" resultType="String">
+		select tl_name from t_line
+	</select>
+	<select id="selectClient" resultType="String">
+		select tc_name from t_client
+	</select>
+	<select id="selectDept" resultType="String">
+		select td_name from t_dept
+	</select>
+	<select id="selectSort" resultType="String">
+		select tsort_name from t_sort
+	</select>
+	<insert id="insertQuestion">
+		INSERT INTO t_question(t_user_id,t_ws_id,t_line_id,t_client_id,
+		tq_no,tq_pro_name,tq_pro_plan_num,tq_pro_num,tq_bad_ratio,tq_add_tim,tq_body)
+		VALUES(#{user_id},#{ws_id},#{line_id},#{client_id},#{no},#{pro_name},
+		#{pro_plan_num},#{pro_num},#{bad_ratio},#{add_tim},#{body})
+	</insert>
+	<insert id="addClient" parameterType="String">
+		INSERT INTO t_client(tc_name) VALUES (#{client})
+	</insert>
+</mapper>	
+	
+	
+	
